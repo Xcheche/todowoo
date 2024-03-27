@@ -48,11 +48,13 @@ def loginuser(request):
             login(request, user)
             return redirect('currenttodos')
 
+
 @login_required
 def logoutuser(request):
     if request.method == 'POST':
         logout(request)
         return redirect('home')
+
 
 @login_required
 def createtodo(request):
@@ -68,17 +70,20 @@ def createtodo(request):
         except ValueError:
             return render(request, 'todo/createtodo.html', {'form': TodoForm(), 'error': 'Bad data passed in. Try again.'})
 
+
 @login_required
 def currenttodos(request):
 
     todos = Todo.objects.filter(user=request.user, datecompleted__isnull=True)
     return render(request, 'todo/currenttodos.html', {'todos': todos})
 
+
 @login_required
 def completedtodos(request):
 
     todos = Todo.objects.filter(user=request.user, datecompleted__isnull=False).order_by('-datecompleted')
     return render(request, 'todo/completedtodos.html', {'todos': todos})
+
 
 @login_required
 def viewtodo(request, todo_pk):
@@ -98,6 +103,7 @@ def viewtodo(request, todo_pk):
     form = TodoForm(instance=todo)  # Define the form
     return render(request, 'todo/viewtodo.html', {'todo': todo, 'form': form})
 
+
 @login_required
 def completetodo(request, todo_pk):
     todo = get_object_or_404(Todo, pk=todo_pk, user=request.user)
@@ -105,6 +111,7 @@ def completetodo(request, todo_pk):
         todo.datecompleted = timezone.now()
         todo.save()
         return redirect('currenttodos')
+
 
 @login_required
 def deletetodo(request, todo_pk):
